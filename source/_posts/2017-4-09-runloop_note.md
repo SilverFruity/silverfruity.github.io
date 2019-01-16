@@ -1,8 +1,10 @@
 ---
 layout: post
 title: RunLoop学习笔记
-category: note
-tags: Objective-C,RunLoop
+category: 笔记
+tags: 
+- iOS
+- RunLoop
 ---
 [图片和有些内容出自 - 深入理解RunLoop](http://blog.ibireme.com/2015/05/18/runloop/)
 
@@ -10,7 +12,7 @@ tags: Objective-C,RunLoop
 
 ![picture]({{site.baseurl}}/assets/note/runLoop_note_0.png)
 
-```objective-c
+```objc
 CFRunLoopRef
    | CFRunLoopModeRef
 	   | CFRunLoopSourceRef
@@ -18,7 +20,7 @@ CFRunLoopRef
        | CFRunLoopObserverRef
 ```
 
-```objective-c
+```objc
 struct __CFRunLoopMode {
     CFStringRef _name;            // Mode Name, 例如 @"kCFRunLoopDefaultMode"
     CFMutableSetRef _sources0;    // Set
@@ -41,7 +43,7 @@ struct __CFRunLoop {
 <!-- more -->
 ### RunLoop的状态
 
-```objective-c
+```objc
 typedef CF_OPTIONS(CFOptionFlags, CFRunLoopActivity) {
     kCFRunLoopEntry         = (1UL << 0), // 1   即将进入RunLoop
     kCFRunLoopBeforeTimers  = (1UL << 1), // 2   即将处理Timer
@@ -58,7 +60,7 @@ typedef CF_OPTIONS(CFOptionFlags, CFRunLoopActivity) {
 
 
 ### RunLoop内的自动释放池的创建与释放
-```objective-c
+```objc
 {
     /// 1. 通知Observers，即将进入RunLoop
     /// 此处有Observer会创建AutoreleasePool: _objc_autoreleasePoolPush();
@@ -109,7 +111,7 @@ typedef CF_OPTIONS(CFOptionFlags, CFRunLoopActivity) {
 
 添加一个Observer
 
-```objective-c
+```objc
     NSDictionary *arr = @{@(1):@"进入RunLoop",
                           @(2):@"即将处理Timer",
                           @(4):@"即将处理Source",
@@ -124,7 +126,7 @@ typedef CF_OPTIONS(CFOptionFlags, CFRunLoopActivity) {
 ```
 
 ### 定时器
-```objective-c
+```objc
     //GCD定时器
     static dispatch_source_t timer;
     timer = dispatch_source_create(DISPATCH_SOURCE_TYPE_TIMER, 0, 0, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0));
@@ -169,7 +171,7 @@ typedef CF_OPTIONS(CFOptionFlags, CFRunLoopActivity) {
 ```
 
 ### 开辟一个常驻线程
-```objective-c
+```objc
 #import <Foundation/Foundation.h>
 
 @interface NSObject (ResidentThread)
@@ -181,7 +183,7 @@ typedef CF_OPTIONS(CFOptionFlags, CFRunLoopActivity) {
 @end
 ```
 
-```objective-c
+```objc
 #import "NSObject+ResidentThread.h"
 
 @implementation NSObject(ResidentThread)

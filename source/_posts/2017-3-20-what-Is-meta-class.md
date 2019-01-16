@@ -1,8 +1,10 @@
 ---
 layout: post
 title: Objectivce-C中的meta-class是什么
-category: translation
-tags: Objective-C,Runtime
+category: 翻译
+tags: 
+- iOS
+- Runtime
 ---
 
 *Copyright 2010 Matt Gallagher: [cocoawithlove.com](https://cocoawithlove.com).*
@@ -15,7 +17,7 @@ tags: Objective-C,Runtime
 ### 在程序运行的时候创建一个类
 在程序运行的时候,下面的代码创建了一个`NSError`的子类，并给它添加了一个方法。
 
-```objective-c
+```objc
 Class newClass = objc_allocateClassPair([NSError class], "RuntimeErrorSubclass", 0);
 class_addMethod(newClass, @selector(report), (IMP)ReportFunction, "v@:");
 objc_registerClassPair(newClass);
@@ -23,7 +25,7 @@ objc_registerClassPair(newClass);
 
 这个被添加的方法使用`ReportFunction`函数作为它的实现。`ReportFunction`函数的定义如下:
 
-```objective-c
+```objc
 void ReportFunction(id self, SEL _cmd)
 {
     NSLog(@"This object is %p.", self);
@@ -50,20 +52,24 @@ void ReportFunction(id self, SEL _cmd)
 但是，现在的问题是：什么是`class pair`? `objc_allocateClassPair`函数只返回了一个值: 类。那这个`class pair`的另一半又在哪呢？我相信你已经猜到了:`class pair`的另一半就是`meta-class`（它是这篇文章的标题），但我需要向你解释它是什么,为什么你需要它，我将会给出一些Objectivce-C中的类和对象的背景。
 
 ### 让一个数据结构变成一个对象，需要些什么?
+
 每一个对象都有一个类，这是面对对象的基本概念，但是在Objectivce-C中，它也是数据的基本组成部分(每个对象都拥有一个指向类结构体的指针)。任何 拥有一个指向在正确位置的类的指针 的数据结构都可以被视为一个对象。
 
 在Objectivce-C中，一个对象的类被一个`isa`指针所决定。这个`isa`指针指向对象的类。
 
 实际上，在Objectivce-C中，一个对象的基础定义是这样的:
-```
-typedef struct objc_object {
+
+ ```objc
+ typedef struct objc_object {
     Class isa;
 } *id;
-```
+ ```
+
 👆这个定义说明:任何一个 以指向一个`Class`结构体的指针 开始的结构体都能够被视为一个对象。
 
 在Objectivce-C中，对象最重要的功能就是我们能够给它们发送消息:
-```
+
+```objc
 [@"stringValue" writeToFile:@"/file.txt" atomically:YES encoding:NSUTF8StringEncoding error:NULL];
 ```
 
@@ -72,16 +78,20 @@ typedef struct objc_object {
 重要的一点是: `Class`定义了你能够发送给对象的消息(对象方法列表)。
 
 ### 什么是`meta-Class`?
+
 现在,像你所知道的: 一个`Class`在Objectivce-C中也是一个对象。这个就意味着你也能够给一个`Class`发送消息。
-```
+
+```objc
 NSStringEncoding defaultStringEncoding = [NSString defaultStringEncoding];
 ```
+
 在这里,`defaultStringEncoding`被发送给了`NSString`类.
 
 这段代码之所以会执行，是因为在Objectivce-C中每一个`Class`其本质上也是一个对象.这就意味着`Class`结构体必须是以一个`isa`指针开始的结构体,以至于它与我上面显示的`objc_object`结构体是二进制兼容的,并且下一个在结构体中的字段必须是一个指向`superclass`的指针(或者对于基本类来说就是nil).
 
 [像我上周展示的一样](http://www.cocoawithlove.com/2010/01/getting-subclasses-of-objective-c-class.html),这里有几种不同定义`Class`的方式,这取决于你所运行的`runtime`的版本,但是,它们都是以一个`isa`字段开头,后跟一个`superclass`字段。
-```objective-c
+
+```objc
 typedef struct objc_class *Class;
 struct objc_class {
     Class isa;
@@ -117,13 +127,12 @@ struct objc_class {
 
  对于所有在`NSObject`体系下的实例,类和meta-class的来说，`NSObject`的所有的对象方法对它们来说都是有效的。对于类和meta-class来说,所有的`NSObject`的类方法是有效的。
 
-
 ### 通过实验证明以上观点
 为了证明以上观点,让我们看看我在文章开头给出的`ReportFunction`函数的输出吧.这个函数的目的是沿着`isa`指针并且打印它找到的是什么.
 
 为了执行`ReportFunction`函数,我们需要创建一个动态创建的类的实例并且执行`report`对象方法.
 
-```objective-c
+```objc
 id instanceOfNewClass = [[newClass alloc] initWithDomain:@"someDomain" code:0 userInfo:nil];
 [instanceOfNewClass performSelector:@selector(report)];
 //[instanceOfNewClass release];
@@ -140,7 +149,8 @@ id instanceOfNewClass = [[newClass alloc] initWithDomain:@"someDomain" code:0 us
  ![picture]({{site.baseurl}}/assets/translation/instance-class-meta_class-02.png)
 
 当程序运行的时候,这是它的输出(去掉了`NSlog`的前缀):
-```objective-c
+
+```objc
 This object is 0x10010c810.
 Class is RuntimeErrorSubclass, and super is NSError.
 Following the isa pointer 1 times gives 0x10010c600
@@ -150,6 +160,7 @@ Following the isa pointer 4 times gives 0x7fff71038480
 NSObject's class is 0x7fff710384a8
 NSObject's meta class is 0x7fff71038480
 ```
+
 看着下面通过反复沿着`isa`指针到达的内存地址:
 * 对象的地址是`0x10010c810`
 * 类的地址是`0x10010c600`
