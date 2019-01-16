@@ -1,7 +1,9 @@
 ---
 layout: post
 title: RunLoop学习笔记
-category: 笔记
+date: 2017-4-9
+category: 
+- 笔记
 tags: 
 - iOS
 - RunLoop
@@ -10,7 +12,7 @@ tags:
 
 ### RunLoop的内部组成
 
-![picture]({{site.baseurl}}/assets/note/runLoop_note_0.png)
+{% asset_img runLoop_note_0.png %}
 
 ```objc
 CFRunLoopRef
@@ -56,7 +58,7 @@ typedef CF_OPTIONS(CFOptionFlags, CFRunLoopActivity) {
 ```
 
 ### RunLoop的内部逻辑
-![picture]({{site.baseurl}}/assets/note/runLoop_note_1.png)
+{% asset_img runLoop_note_1.png %}
 
 
 ### RunLoop内的自动释放池的创建与释放

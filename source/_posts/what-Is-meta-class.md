@@ -1,8 +1,10 @@
 ---
 layout: post
 title: Objectivce-C中的meta-class是什么
-category: 翻译
-tags: 
+date: 2017-3-20
+category: 
+- 翻译
+tags:
 - iOS
 - Runtime
 ---
@@ -146,7 +148,7 @@ id instanceOfNewClass = [[newClass alloc] initWithDomain:@"someDomain" code:0 us
 获取一个对象的类: `ReportFunction`使用`object_getClass`去得到`isa`指针,应为`isa`是类的保护成员(你不能直接的访问其他对象的`isa`指针).`ReportFunction`没有使用`class`方法的原因是: 在一个类对象上执行`class`方法不会返回`meta-Class`，它始终都只会返回`Class`(所以`[NSString class]会返回`NSString`类而不是`NSString`的`meta-class`).
 
 这是NSObject的class对象方法和类方法的实现:
- ![picture]({{site.baseurl}}/assets/translation/instance-class-meta_class-02.png)
+{% asset_img instance-class-meta_class-02.png %}
 
 当程序运行的时候,这是它的输出(去掉了`NSlog`的前缀):
 
@@ -189,4 +191,4 @@ NSObject's meta class is 0x7fff71038480
 [iOS类型编码](https://developer.apple.com/library/content/documentation/Cocoa/Conceptual/ObjCRuntimeGuide/Articles/ocrtTypeEncodings.html)
 > id Class meta-class 之间的关系
 
-![picture]({{site.baseurl}}/assets/translation/instance-class-meta_class-01.png)
+{% asset_img instance-class-meta_class-01.png %}
