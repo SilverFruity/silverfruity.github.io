@@ -361,7 +361,7 @@ han: false
 # Disqus
 disqus:
   enable: false
-  shortname:
+  shortname: SilverFruity
   count: true
 
 # Hypercomments
@@ -378,13 +378,13 @@ changyan:
 # You can get your appid and appkey from https://leancloud.cn
 # more info please open https://valine.js.org
 valine:
-  enable: false
-  appid:  # your leancloud application appid
-  appkey:  # your leancloud application appkey
+  enable: true
+  appid: VS3cQiJ0SvKu8yffcUhucXVa-gzGzoHsz  # your leancloud application appid
+  appkey: 7IsQXOyh5G5NhvJGb0gCQvtl # your leancloud application appkey
   notify: false # mail notifier , https://github.com/xCss/Valine/wiki
   verify: false # Verification code
-  placeholder: Just go go # comment box placeholder
-  avatar: mm # gravatar style
+  placeholder: Emmm. # comment box placeholder
+  avatar: monsterid # gravatar style
   guest_info: nick,mail,link # custom comment header
   pageSize: 10 # pagination size
 
@@ -407,10 +407,10 @@ gitment:
   lazy: false # Comments lazy loading with a button
   cleanly: false # Hide 'Powered by ...' on footer, and more
   language: # Force language, or auto switch by theme
-  github_user: # MUST HAVE, Your Github ID
-  github_repo: # MUST HAVE, The repo you use to store Gitment comments
-  client_id: # MUST HAVE, Github client id for the Gitment
-  client_secret: # EITHER this or proxy_gateway, Github access secret token for the Gitment
+  github_user: 16136774 # MUST HAVE, Your Github ID
+  github_repo: http://silverfruity.github.io # MUST HAVE, The repo you use to store Gitment comments
+  client_id: 9af3750e01a127cc00f3 # MUST HAVE, Github client id for the Gitment
+  client_secret: 5579fd33c5164126d0ec3b322eb53c93f3e4ca83 # EITHER this or proxy_gateway, Github access secret token for the Gitment
   proxy_gateway: # Address of api proxy, See: https://github.com/aimingoo/intersect
   redirect_protocol: # Protocol of redirect_uri with force_redirect_protocol when mint enabled
 
