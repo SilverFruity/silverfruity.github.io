@@ -3,12 +3,14 @@
 ## Source: https://github.com/hexojs/hexo/
 
 # Site
-title: CoderLife
+title: SilverFruity
 subtitle:
 description:
 keywords:
-author: SilverFruity
+author: 
 language:
+  - zh-Hans
+  - en
 timezone:
 
 # URL
