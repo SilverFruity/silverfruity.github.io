@@ -28,18 +28,18 @@ OCRunner与[JSPatch](https://github.com/bang590/JSPatch)，[OCEval](https://gith
 
 [OCRunnerDemo](https://github.com/SilverFruity/OCRunner/tree/master/OCRunnerDemo)可以作为整个流程的参照.
 
-###  1. Cocoapods导入OCRunner
+###  Cocoapods导入OCRunner
 ```ruby
 pod 'OCRunner'      #支持所有架构，包含libffi.a
 # 或者
 pod 'OCRunnerArm64' #仅支持 arm64和arm64e，没有libffi.a
 ```
 
-### 2. 下载 [PatchGenerator](https://github.com/SilverFruity/oc2mango/releases)
+### 下载 [PatchGenerator](https://github.com/SilverFruity/oc2mango/releases)
 
 解压PatchGenerato.zip，然后将PatchGenerator保存到/usr/bin/或项目目录下.
 
-### 3.  添加PatchGenerator的 `Run Script` 
+### 添加PatchGenerator的 `Run Script` 
 
 1. **Project Setting** -> **Build Phases** -> 左上角的 `+` -> `New Run Script Phase`
 
@@ -51,7 +51,7 @@ pod 'OCRunnerArm64' #仅支持 arm64和arm64e，没有libffi.a
    $SRCROOT/OCRunnerDemo/PatchGenerator -files $SRCROOT/OCRunnerDemo/ViewController1 -refs  $SRCROOT/OCRunnerDemo/Scripts.bundle -output $SRCROOT/OCRunnerDemo/binarypatch
    ```
 
-### 4. 开发环境下: 运行补丁
+### 开发环境下: 运行补丁
 
 1. 将生成的补丁文件作为资源文件添加到项目中
 
@@ -71,7 +71,7 @@ pod 'OCRunnerArm64' #仅支持 arm64和arm64e，没有libffi.a
 
 3. 每次修改文件，记得Command+B，调用Run Scrip，重新生成补丁文件.
 
-### 5. 正式环境
+### 正式环境
 
 1. 将补丁上传到服务器
 2. App中下载补丁文件并保存到本地
@@ -81,9 +81,7 @@ pod 'OCRunnerArm64' #仅支持 arm64和arm64e，没有libffi.a
 
 ## 使用介绍
 
-
-
-### 1. 引入结构体、枚举、typedef
+### 引入结构体、枚举、typedef
 
 可以通过修改**OCRunnerDemo**中的**ViewController1**，运行以下代码.
 
@@ -118,7 +116,7 @@ main();
 
 
 
-### 2. 使用系统内置C函数
+### 使用系统内置C函数
 
 ```objc
 //you only need to add the C function declaration in Script.
@@ -144,7 +142,7 @@ NSLog(@"test for link function %@", @"xixi");
 
 
 
-### 3. 修复OC对象（类）方法、添加属性
+### 修复OC对象（类）方法、添加属性
 
 > 小天才英语学习机，不会哪里点哪里
 
@@ -161,6 +159,7 @@ NSLog(@"test for link function %@", @"xixi");
     self.strTypeProperty = @"Mango";
 }
 - (NSString *)testObjectPropertyTest{
+  	[self ORGtestObjectPropertyTest] //方法名前加'ORG'调用原方法
     [self otherMethod];
     return self.strTypeProperty;
 }
@@ -169,7 +168,7 @@ NSLog(@"test for link function %@", @"xixi");
 
 
 
-### 4.Block使用、循环引用解决
+### Block使用、解决循环引用
 
 ```objc
 // 用于解决循环引用
@@ -183,6 +182,78 @@ a();
 
 
 
-未完待续....
+### 使用GCD
 
-先出去骑摩托了.
+本质就是 **使用系统内置C函数**，通过**GCDRefrences**文件添加，GCD相关的函数声明以及typedef皆在其中.
+
+比如:
+
+```objc
+// link dispatch_sync
+void dispatch_sync(dispatch_queue_t queue, dispatch_block_t block);
+void main(){
+  dispatch_queue_t queue = dispatch_queue_create("com.plliang19.mango",DISPATCH_QUEUE_SERIAL);
+	dispatch_async(queue, ^{
+   	completion(@"success");
+	});
+}
+main();
+```
+
+
+
+### 使用内联函数、预编译函数
+
+```objc
+// 内联函数：在补丁中，添加一个全局函数中即可，比如UIKitRefrences中的CGRectMake
+CGRect CGRectMake(CGFloat x, CGFloat y, CGFloat width, CGFloat height)
+{
+  CGRect rect;
+  rect.origin.x = x; rect.origin.y = y;
+  rect.size.width = width; rect.size.height = height;
+  return rect;
+}
+// 预编译函数：需要在App中预埋
+[[MFScopeChain top] setValue:[MFValue valueWithBlock:^void(dispatch_once_t *onceTokenPtr,
+                                                                  dispatch_block_t _Nullable handler){
+        dispatch_once(onceTokenPtr,handler);
+    }] withIndentifier:@"dispatch_once"];
+```
+
+
+
+## 性能测试
+
+{% asset_img OCRunner_1.jpeg %}
+
+根据已知数据，OCRunner的补丁加载速度是JSPatch的20倍+，随着补丁大小的不断增加，这个倍数会不断增加。运行速度和内存占用与MangoFix差距不大。内存占用方面应该会更优，OCRunner中MFValue的值采用malloc来复制值，不会有多个类型的实例变量。
+
+
+
+## 目前的问题
+
+1. 指针与乘号识别冲突问题，衍生的问题：类型转换等等
+2. 不支持static、inline函数声明
+3. 不支持C数组声明:  type a[]和type a[2]，以及 value = { 0 , 0 , 0 , 0 } 这种表达式
+4. 不支持 ‘->’ 操作符号
+5. 不支持C函数替换
+
+
+
+## 支持语法
+1. 类声明与实现，支持分类写法
+3. Protocol
+4. Block语法
+4. 结构体、枚举、typedef
+5. 使用函数声明，链接系统函数指针
+6. 全局函数
+7. 多参数调用（方法和函数）
+8. **\***、**&**  (指针操作)
+9. NSArray: @[value1, value2]，NSDictionary: @{ key: value },  NSNumer:  @(value)
+10. NSArray取值和NSDictionary取值和赋值语法，id value = a[var];  a[var] = value;
+11. [运算符，除去'->'皆已实现](https://baike.baidu.com/item/%E8%BF%90%E7%AE%97%E7%AC%A6%E4%BC%98%E5%85%88%E7%BA%A7/4752611?fr=aladdin)
+
+... 等
+
+想到了再加吧😂
+
