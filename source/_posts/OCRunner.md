@@ -10,19 +10,32 @@ tags:
 - Objective-C
 ---
 
-使用[OCRunner](https://github.com/SilverFruity/OCRunner)开发补丁的工作流.
+## 简介
+
+### [OCRunner](https://github.com/SilverFruity/OCRunner)开发补丁的工作流
 
 {% asset_img OCRunner_0.jpeg %}
 
-OCRunner与[JSPatch](https://github.com/bang590/JSPatch)，[OCEval](https://github.com/lilidan/OCEval)和[MangoFix](https://github.com/YPLiang19/Mango)等的主要区别:
+<!-- more -->
 
-* 下发二进制补丁文件。增加安全性，减小补丁大小，省去词法分析与语法分析，优化启动时间，可在PatchGenerator阶段进行优化（TODO: 未被调用的函数等信息，将会被过滤）
+### 初衷
+
+为了能够实现一篇文章的思路：Objective-C源码 -> 二进制补丁文件 ->热更新（具体是哪篇我忘了）。当时刚好开始了[oc2mango](https://github.com/SilverFruity/oc2mango)翻译器的漫漫长路（顺带为了学习编译原理，嘻嘻），等基本完成以后，就开始肝OCRunner：完全兼容struct，enum，系统C函数调用，魔改libffi，生成补丁文件等，尽可能兼容Objective-C，为了做一个直接运行OC的快乐人。
+
+### 各方职责
+
+* [oc2mangoLib](https://github.com/SilverFruity/oc2mango/tree/master/oc2mangoLib)相当于一个简单的编译器，负责生成语法树
+* [ORPatchFile](https://github.com/SilverFruity/oc2mango/tree/master/oc2mangoLib/PatchFile)负责将语法树序列化、反序列化和版本判断
+* [PatchGenerator](https://github.com/SilverFruity/oc2mango/tree/master/PatchGenerator)负责将oc2mangoLib和ORPatchFile的功能整合（以上工具都在[oc2mango](https://github.com/SilverFruity/oc2mango)项目下）
+* [OCRunner](https://github.com/SilverFruity/OCRunner)负责解释执行语法树
+
+### 与其他库的区别
+
+* 下发二进制补丁文件。增加安全性，减小补丁大小，省去词法分析与语法分析，优化启动时间，可在PatchGenerator阶段进行优化
 
 * 自定义的Arm64 ABI （可以不使用libffi）
 
 * 完整的Objective-C语法支持，除去预编译和部分语法
-
-<!-- more -->
 
 ## 本地使用OCRunner运行补丁
 
@@ -249,6 +262,7 @@ CGRect CGRectMake(CGFloat x, CGFloat y, CGFloat width, CGFloat height)
 6. 全局函数
 7. 多参数调用（方法和函数）
 8. **\***、**&**  (指针操作)
+9. 变量static关键字
 9. NSArray: @[value1, value2]，NSDictionary: @{ key: value },  NSNumer:  @(value)
 10. NSArray取值和NSDictionary取值和赋值语法，id value = a[var];  a[var] = value;
 11. [运算符，除去'->'皆已实现](https://baike.baidu.com/item/%E8%BF%90%E7%AE%97%E7%AC%A6%E4%BC%98%E5%85%88%E7%BA%A7/4752611?fr=aladdin)
@@ -257,3 +271,10 @@ CGRect CGRectMake(CGFloat x, CGFloat y, CGFloat width, CGFloat height)
 
 想到了再加吧😂
 
+
+## 目标
+
+* 完善当前的语法支持
+* 更多的单元测试覆盖（尽管目前显示是84%）
+* PatchGenerator阶段进行优化：未被调用的函数声明、结构体、枚举等，不会在补丁中，减少包大小以及加载时间等
+* 尝试Swift热更新（新建库吧，哈哈）
