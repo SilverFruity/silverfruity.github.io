@@ -235,6 +235,15 @@ CGRect CGRectMake(CGFloat x, CGFloat y, CGFloat width, CGFloat height)
 
 
 
+### 如何确定补丁中是否包含源文件
+
+{% asset_img OCRunner_2.jpeg %}
+
+查看Run Script打印的 **InputFiles** 中是否包含源文件.
+
+
+
+
 ## 性能测试
 
 {% asset_img OCRunner_1.jpeg %}
