@@ -378,7 +378,7 @@ changyan:
 # You can get your appid and appkey from https://leancloud.cn
 # more info please open https://valine.js.org
 valine:
-  enable: true
+  enable: false
   appid: VS3cQiJ0SvKu8yffcUhucXVa-gzGzoHsz  # your leancloud application appid
   appkey: 7IsQXOyh5G5NhvJGb0gCQvtl # your leancloud application appkey
   notify: false # mail notifier , https://github.com/xCss/Valine/wiki
@@ -402,7 +402,7 @@ valine:
 # Introduction: https://imsun.net/posts/gitment-introduction/
 # You can get your Github ID from https://api.github.com/users/<Github username>
 gitment:
-  enable: false
+  enable: true
   mint: true # RECOMMEND, A mint on Gitment, to support count, language and proxy_gateway
   count: true # Show comments count in post meta area
   lazy: false # Comments lazy loading with a button
@@ -410,8 +410,8 @@ gitment:
   language: # Force language, or auto switch by theme
   github_user: 16136774 # MUST HAVE, Your Github ID
   github_repo: http://silverfruity.github.io # MUST HAVE, The repo you use to store Gitment comments
-  client_id: 9af3750e01a127cc00f3 # MUST HAVE, Github client id for the Gitment
-  client_secret: 5579fd33c5164126d0ec3b322eb53c93f3e4ca83 # EITHER this or proxy_gateway, Github access secret token for the Gitment
+  client_id: 4d78553fd7e83437e10e # MUST HAVE, Github client id for the Gitment
+  client_secret: ddf64636c9c757bd81bd5b968e6e39488d78fecc # EITHER this or proxy_gateway, Github access secret token for the Gitment
   proxy_gateway: # Address of api proxy, See: https://github.com/aimingoo/intersect
   redirect_protocol: # Protocol of redirect_uri with force_redirect_protocol when mint enabled
 
