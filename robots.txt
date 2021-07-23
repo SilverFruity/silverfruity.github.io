@@ -1,0 +1,10 @@
+User-agent: *
+Allow: /
+
+Allow: /blogs/
+Disallow: /tag/
+Disallow: /categories/
+Disallow: /assets/
+Disallow: /timeline/
+Sitemap: https://silverfruity.github.io/sitemap.xml
+Sitemap: https://silverfruity.github.io/baidusitemap.xml

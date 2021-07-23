@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>OCRunner - 二进制补丁文件的实现 | SilverFruity</title>
+    <meta name="generator" content="VuePress 1.8.2">
+    <link rel="icon" href="/favicon.ico">
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
+    <meta name="robots" content="all">
+    <meta name="author" content="SilverFruity">
+    <meta name="keywords" content="SilverFruity,iOS开发,iOS热更新,iOS热修复,OCRunner,OCRunner热修复,OCRunner热更新,iOS13 URL Scheme,iOS libffi,iOS圆角阴影边框,SFImageMaker">
+    
+    <link rel="preload" href="/assets/css/0.styles.76394d41.css" as="style"><link rel="preload" href="/assets/js/app.642360de.js" as="script"><link rel="preload" href="/assets/js/3.96dd975e.js" as="script"><link rel="preload" href="/assets/js/1.a1bdfc9f.js" as="script"><link rel="preload" href="/assets/js/9.c59f4e54.js" as="script"><link rel="prefetch" href="/assets/js/10.25bf899d.js"><link rel="prefetch" href="/assets/js/11.157d52a3.js"><link rel="prefetch" href="/assets/js/12.8a8b1872.js"><link rel="prefetch" href="/assets/js/13.1dae41fb.js"><link rel="prefetch" href="/assets/js/14.e4e4de80.js"><link rel="prefetch" href="/assets/js/15.c4b76f8c.js"><link rel="prefetch" href="/assets/js/16.011f3196.js"><link rel="prefetch" href="/assets/js/17.6311839b.js"><link rel="prefetch" href="/assets/js/18.a87dbe2d.js"><link rel="prefetch" href="/assets/js/19.9d3706b6.js"><link rel="prefetch" href="/assets/js/20.b24ad8a1.js"><link rel="prefetch" href="/assets/js/21.929dacda.js"><link rel="prefetch" href="/assets/js/22.220fde3c.js"><link rel="prefetch" href="/assets/js/23.0b29fee2.js"><link rel="prefetch" href="/assets/js/4.75bd731a.js"><link rel="prefetch" href="/assets/js/5.9f13c650.js"><link rel="prefetch" href="/assets/js/6.6d7a0f1d.js"><link rel="prefetch" href="/assets/js/7.e4f440fa.js"><link rel="prefetch" href="/assets/js/8.428a0490.js">
+    <link rel="stylesheet" href="/assets/css/0.styles.76394d41.css">
+  </head>
+  <body>
+    <div id="app" data-server-rendered="true"><div class="theme-container no-sidebar" data-v-1156296a><div data-v-1156296a><div id="loader-wrapper" class="loading-wrapper" data-v-d48f4d20 data-v-1156296a data-v-1156296a><div class="loader-main" data-v-d48f4d20><div data-v-d48f4d20></div><div data-v-d48f4d20></div><div data-v-d48f4d20></div><div data-v-d48f4d20></div></div> <!----> <!----></div> <div class="password-shadow password-wrapper-out" style="display:none;" data-v-4e82dffc data-v-1156296a data-v-1156296a><h3 class="title" data-v-4e82dffc data-v-4e82dffc>SilverFruity</h3> <p class="description" data-v-4e82dffc data-v-4e82dffc></p> <label id="box" class="inputBox" data-v-4e82dffc data-v-4e82dffc><input type="password" value="" data-v-4e82dffc> <span data-v-4e82dffc>Konck! Knock!</span> <button data-v-4e82dffc>OK</button></label> <div class="footer" data-v-4e82dffc data-v-4e82dffc><span data-v-4e82dffc><i class="iconfont reco-theme" data-v-4e82dffc></i> <a target="blank" href="https://vuepress-theme-reco.recoluan.com" data-v-4e82dffc>vuePress-theme-reco</a></span> <span data-v-4e82dffc><i class="iconfont reco-copyright" data-v-4e82dffc></i> <a data-v-4e82dffc><span data-v-4e82dffc>SilverFruity</span>
+            
+          <span data-v-4e82dffc>2017 - </span>
+          2021
+        </a></span></div></div> <div class="hide" data-v-1156296a><header class="navbar" data-v-1156296a><div class="sidebar-button"><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="img" viewBox="0 0 448 512" class="icon"><path fill="currentColor" d="M436 124H12c-6.627 0-12-5.373-12-12V80c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12zm0 160H12c-6.627 0-12-5.373-12-12v-32c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12zm0 160H12c-6.627 0-12-5.373-12-12v-32c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12z"></path></svg></div> <a href="/" class="home-link router-link-active"><img src="/logo.png" alt="SilverFruity" class="logo"> <span class="site-name">SilverFruity</span></a> <div class="links"><div class="color-picker"><a class="color-button"><i class="iconfont reco-color"></i></a> <div class="color-picker-menu" style="display:none;"><div class="mode-options"><h4 class="title">Choose mode</h4> <ul class="color-mode-options"><li class="dark">dark</li><li class="auto active">auto</li><li class="light">light</li></ul></div></div></div> <div class="search-box"><i class="iconfont reco-search"></i> <input aria-label="Search" autocomplete="off" spellcheck="false" value=""> <!----></div> <nav class="nav-links can-hide"><div class="nav-item"><a href="/" class="nav-link"><i class="iconfont reco-home"></i>
+  Home
+</a></div><div class="nav-item"><div class="dropdown-wrapper"><a class="dropdown-title"><span class="title"><i class="iconfont reco-category"></i>
+      Category
+    </span> <span class="arrow right"></span></a> <ul class="nav-dropdown" style="display:none;"><li class="dropdown-item"><!----> <a href="/categories/笔记/" class="nav-link"><i class="undefined"></i>
+  笔记
+</a></li><li class="dropdown-item"><!----> <a href="/categories/翻译/" class="nav-link"><i class="undefined"></i>
+  翻译
+</a></li><li class="dropdown-item"><!----> <a href="/categories/OpenSource/" class="nav-link"><i class="undefined"></i>
+  OpenSource
+</a></li><li class="dropdown-item"><!----> <a href="/categories/逆向/" class="nav-link"><i class="undefined"></i>
+  逆向
+</a></li><li class="dropdown-item"><!----> <a href="/categories/OCRunner/" class="nav-link"><i class="undefined"></i>
+  OCRunner
+</a></li></ul></div></div><div class="nav-item"><a href="/tag/" class="nav-link"><i class="iconfont reco-tag"></i>
+  Tag
+</a></div><div class="nav-item"><a href="/timeline/" class="nav-link"><i class="iconfont reco-date"></i>
+  TimeLine
+</a></div><div class="nav-item"><div class="dropdown-wrapper"><a class="dropdown-title"><span class="title"><i class="iconfont reco-message"></i>
+      Contact
+    </span> <span class="arrow right"></span></a> <ul class="nav-dropdown" style="display:none;"><li class="dropdown-item"><!----> <a href="https://github.com/SilverFruity" target="_blank" rel="noopener noreferrer" class="nav-link external"><i class="iconfont reco-github"></i>
+  GitHub
+  <span><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg> <span class="sr-only">(opens new window)</span></span></a></li></ul></div></div> <!----></nav></div></header> <div class="sidebar-mask" data-v-1156296a></div> <aside class="sidebar" data-v-1156296a><div class="personal-info-wrapper" data-v-828910c6 data-v-1156296a><img src="/avatar.png" alt="author-avatar" class="personal-img" data-v-828910c6> <h3 class="name" data-v-828910c6>
+    SilverFruity
+  </h3> <div class="num" data-v-828910c6><div data-v-828910c6><h3 data-v-828910c6>13</h3> <h6 data-v-828910c6>Articles</h6></div> <div data-v-828910c6><h3 data-v-828910c6>12</h3> <h6 data-v-828910c6>Tags</h6></div></div> <ul class="social-links" data-v-828910c6></ul> <hr data-v-828910c6></div> <nav class="nav-links"><div class="nav-item"><a href="/" class="nav-link"><i class="iconfont reco-home"></i>
+  Home
+</a></div><div class="nav-item"><div class="dropdown-wrapper"><a class="dropdown-title"><span class="title"><i class="iconfont reco-category"></i>
+      Category
+    </span> <span class="arrow right"></span></a> <ul class="nav-dropdown" style="display:none;"><li class="dropdown-item"><!----> <a href="/categories/笔记/" class="nav-link"><i class="undefined"></i>
+  笔记
+</a></li><li class="dropdown-item"><!----> <a href="/categories/翻译/" class="nav-link"><i class="undefined"></i>
+  翻译
+</a></li><li class="dropdown-item"><!----> <a href="/categories/OpenSource/" class="nav-link"><i class="undefined"></i>
+  OpenSource
+</a></li><li class="dropdown-item"><!----> <a href="/categories/逆向/" class="nav-link"><i class="undefined"></i>
+  逆向
+</a></li><li class="dropdown-item"><!----> <a href="/categories/OCRunner/" class="nav-link"><i class="undefined"></i>
+  OCRunner
+</a></li></ul></div></div><div class="nav-item"><a href="/tag/" class="nav-link"><i class="iconfont reco-tag"></i>
+  Tag
+</a></div><div class="nav-item"><a href="/timeline/" class="nav-link"><i class="iconfont reco-date"></i>
+  TimeLine
+</a></div><div class="nav-item"><div class="dropdown-wrapper"><a class="dropdown-title"><span class="title"><i class="iconfont reco-message"></i>
+      Contact
+    </span> <span class="arrow right"></span></a> <ul class="nav-dropdown" style="display:none;"><li class="dropdown-item"><!----> <a href="https://github.com/SilverFruity" target="_blank" rel="noopener noreferrer" class="nav-link external"><i class="iconfont reco-github"></i>
+  GitHub
+  <span><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg> <span class="sr-only">(opens new window)</span></span></a></li></ul></div></div> <!----></nav> <!----> </aside> <div class="password-shadow password-wrapper-in" style="display:none;" data-v-4e82dffc data-v-1156296a><h3 class="title" data-v-4e82dffc data-v-4e82dffc>OCRunner - 二进制补丁文件的实现</h3> <!----> <label id="box" class="inputBox" data-v-4e82dffc data-v-4e82dffc><input type="password" value="" data-v-4e82dffc> <span data-v-4e82dffc>Konck! Knock!</span> <button data-v-4e82dffc>OK</button></label> <div class="footer" data-v-4e82dffc data-v-4e82dffc><span data-v-4e82dffc><i class="iconfont reco-theme" data-v-4e82dffc></i> <a target="blank" href="https://vuepress-theme-reco.recoluan.com" data-v-4e82dffc>vuePress-theme-reco</a></span> <span data-v-4e82dffc><i class="iconfont reco-copyright" data-v-4e82dffc></i> <a data-v-4e82dffc><span data-v-4e82dffc>SilverFruity</span>
+            
+          <span data-v-4e82dffc>2017 - </span>
+          2021
+        </a></span></div></div> <div data-v-1156296a><main class="page"><section><div class="page-title"><h1 class="title">OCRunner - 二进制补丁文件的实现</h1> <div data-v-1ff7123e><i class="iconfont reco-account" data-v-1ff7123e><span data-v-1ff7123e>SilverFruity</span></i> <i class="iconfont reco-date" data-v-1ff7123e><span data-v-1ff7123e>3/10/2021</span></i> <!----> <i class="tags iconfont reco-tag" data-v-1ff7123e><span class="tag-item" data-v-1ff7123e>hotfix</span><span class="tag-item" data-v-1ff7123e>iOS</span></i></div></div> <div class="theme-reco-content content__default"><p>二进制补丁的主要目的是优化JSON补丁，所以先从JSON补丁说起。</p> <h2 id="前言"><a href="#前言" class="header-anchor">#</a> 前言</h2> <p>OCRunner 最初的时候是打算只使用 Json 补丁的，可当在我能力范围内对JSON补丁进行了压缩以后，发现 Json 补丁的大小仍不能接受的，太多的冗余字符了。在我思考了一段时间后，发现可以使用 Json 补丁的数据结构，以二进制数据的形式来消除这些冗余字符，大幅降低补丁的大小，所以二进制补丁的初衷是为了优化 Json 补丁的冗余字符，所以我们将先从 Json 补丁说起。</p> <h2 id="json-补丁"><a href="#json-补丁" class="header-anchor">#</a> Json 补丁</h2> <p>Json 补丁中，每个语法节点对象均拥 className 字段以及所有的属性变量。最后由它们的数组一起构成了语法树。</p> <h3 id="最初的-json-补丁"><a href="#最初的-json-补丁" class="header-anchor">#</a> 最初的 Json 补丁</h3> <p>示例:</p> <div class="language- line-numbers-mode"><pre class="language-text"><code>int a = 1;
+</code></pre> <div class="line-numbers-wrapper"><span class="line-number">1</span><br></div></div><p>使用 oc2mangoLib 输出的语法树结构:</p> <div class="language- line-numbers-mode"><pre class="language-text"><code>ORDeclareExpression:
+    | ORTypeVarPair: pair
+      | ORTypeSpecial: type
+        | type: TypeInt
+        | name: nil
+      | ORVariable: var
+        | isBlock: NO
+        | ptCount: 0
+        | varname: @&quot;a&quot;
+    | modifier: DeclarationModifierNone
+    | ORValueExpression: expression
+      | value_type: OCValueInt
+      | value: @&quot;1&quot;
+</code></pre> <div class="line-numbers-wrapper"><span class="line-number">1</span><br><span class="line-number">2</span><br><span class="line-number">3</span><br><span class="line-number">4</span><br><span class="line-number">5</span><br><span class="line-number">6</span><br><span class="line-number">7</span><br><span class="line-number">8</span><br><span class="line-number">9</span><br><span class="line-number">10</span><br><span class="line-number">11</span><br><span class="line-number">12</span><br><span class="line-number">13</span><br></div></div><p>未做任何压缩时，生成的最原始的 Json 补丁:</p> <div class="language- line-numbers-mode"><pre class="language-text"><code>{
+  &quot;className&quot;: &quot;ORDeclareExpression&quot;,
+  &quot;pair&quot;: {
+    &quot;className&quot;: &quot;ORTypeVarPair&quot;,
+    &quot;type&quot;: {
+      &quot;className&quot;: &quot;ORTypeSpecial&quot;,
+      &quot;type&quot;: 9
+    },
+    &quot;var&quot;: {
+      &quot;className&quot;: &quot;ORVariable&quot;,
+      &quot;ptCount&quot;: 0,
+      &quot;varname&quot;: &quot;a&quot;,
+      &quot;isBlock&quot;: 0
+    }
+  }，
+  &quot;modifier&quot;: 0,
+  &quot;expression&quot;: {
+    &quot;className&quot;: &quot;ORValueExpression&quot;,
+    &quot;value_type&quot;: 10,
+    &quot;value&quot;: &quot;1&quot;
+  }
+}
+</code></pre> <div class="line-numbers-wrapper"><span class="line-number">1</span><br><span class="line-number">2</span><br><span class="line-number">3</span><br><span class="line-number">4</span><br><span class="line-number">5</span><br><span class="line-number">6</span><br><span class="line-number">7</span><br><span class="line-number">8</span><br><span class="line-number">9</span><br><span class="line-number">10</span><br><span class="line-number">11</span><br><span class="line-number">12</span><br><span class="line-number">13</span><br><span class="line-number">14</span><br><span class="line-number">15</span><br><span class="line-number">16</span><br><span class="line-number">17</span><br><span class="line-number">18</span><br><span class="line-number">19</span><br><span class="line-number">20</span><br><span class="line-number">21</span><br><span class="line-number">22</span><br></div></div><p>这个时候的补丁确实是清晰易懂的。但是当代码量增大的时候，天灵盖都会被给炸了。</p> <p>对比一下大小情况:</p> <p><code>int a = 1;</code>: 10个字符。</p> <p>Json 补丁大小:  277字符，直接28倍 -. -。</p> <h3 id="第一次优化补丁大小-使用映射表"><a href="#第一次优化补丁大小-使用映射表" class="header-anchor">#</a> 第一次优化补丁大小:  使用映射表</h3> <p>观察上一步的 Json 补丁，你就可以发现，数据量的增加主要来源于类名，字段名。</p> <p>那有没有办法压缩这两个数据并尽量将这两个数据压缩为长度为1的字符串呢？</p> <p>首先语法树中，节点的类都是已知的，都存在于RunnerClasses.h文件中，并且每个类都有自己的属性列表。</p> <p>因此我们可以将类名替换为当前类在 RunnerClasses.h 文件中所在序号，属性名替换为属性在类中的序号。</p> <p>这个压缩过程，可以是一个简单的加解密过程，使用映射表替换就可以了。</p> <p>加密过程：</p> <ol><li>将类名替换为类的序号。</li> <li>将类中的属性名替换为在当前类中的序号。 第一个属性就是0，第二个就是1。</li></ol> <p>解密过程：</p> <ol><li>将类序号转换为类名。</li> <li>将属性序号转换为当前类的属性名。</li></ol> <p><img src="/assets/img/JsonPatchEncrypt.c71133de.png" alt=""></p> <p>这是将上一步的JSON补丁压缩后的内容:</p> <div class="language- line-numbers-mode"><pre class="language-text"><code>{&quot;1&quot;:{&quot;n&quot;:&quot;3&quot;,&quot;0&quot;:{&quot;n&quot;:&quot;1&quot;,&quot;0&quot;:9},&quot;1&quot;:{&quot;1&quot;:0,&quot;n&quot;:&quot;2&quot;,&quot;2&quot;:&quot;a&quot;,&quot;0&quot;:0}},&quot;n&quot;:&quot;13&quot;,&quot;2&quot;:{&quot;n&quot;:&quot;7&quot;,&quot;0&quot;:10,&quot;1&quot;:&quot;1&quot;},&quot;0&quot;:0}
+</code></pre> <div class="line-numbers-wrapper"><span class="line-number">1</span><br></div></div><p><strong>结果：</strong></p> <ul><li>经过这轮压缩，总字符数缩减到了113个，和之前相比，缩小了3倍。</li></ul> <p><strong>关于如何生成映射表</strong>：</p> <p>在 OCRunnerClasses.h 文件中，根据每个类出现的顺序即可生成对应的枚举值，属性的序号值也是同理。具体实现在 <strong>GeneralCryptoMapTool.py</strong> 中，ORPatchFile 中 Json 补丁的加密解密文件 ClassDecryptMap.json 和 ClassEncryptMap.json 都是由它生成的（现在是 ClassSecretKeyMap.h ），<strong>GeneralCryptoMapTool.py</strong> 主要使用的是正则表达式来匹配类和属性，你可以修改其中的代码来实现你自己关于压缩的想法。</p> <h3 id="第二次优化补丁大小-使用字符串表"><a href="#第二次优化补丁大小-使用字符串表" class="header-anchor">#</a> 第二次优化补丁大小:  使用字符串表</h3> <p><strong>目的:</strong></p> <p>解决补丁中字符串的重复使用。</p> <p><strong>问题:</strong></p> <p>如果代码中出现多次为'xxxxxx'的字符串，在补丁中也会出现多次'xxxxxx'的字符串。 当代码量变大时，这会是导致包体积变大的主要因素。</p> <p><strong>解决办法:</strong></p> <p>这个时候突然联想到了 Mach-O 中的字符串表（不知道该不该这么称呼）。有了这个思路，那么这里完全就可以修改为：补丁中有一个数组专用于存放字符串，而在节点中，所有对该字符串的引用，使用's|index'的形式来实现（其实最好是直接使用该字符串在数组中的 index ，但你在 Json 中直接使用 Int 的话，就没法区分这是一个字符串引用了）。</p> <p><strong>最后结果</strong>:</p> <div class="language- line-numbers-mode"><pre class="language-text"><code>// 优化前
+{
+  &quot;nodes&quot;: [
+    {&quot;1&quot;:0,&quot;n&quot;:&quot;2&quot;,&quot;2&quot;:&quot;NSObject&quot;,&quot;0&quot;:0},
+    {&quot;1&quot;:0,&quot;n&quot;:&quot;2&quot;,&quot;2&quot;:&quot;NSObject&quot;,&quot;0&quot;:0},
+    {&quot;1&quot;:0,&quot;n&quot;:&quot;2&quot;,&quot;2&quot;:&quot;a&quot;,&quot;0&quot;:0}
+  ]
+}
+
+// 优化后
+{
+  &quot;nodes&quot;: [
+    {&quot;1&quot;:0,&quot;n&quot;:&quot;2&quot;,&quot;2&quot;:&quot;s|0&quot;,&quot;0&quot;:0},
+    {&quot;1&quot;:0,&quot;n&quot;:&quot;2&quot;,&quot;2&quot;:&quot;s|0&quot;,&quot;0&quot;:0},
+    {&quot;1&quot;:0,&quot;n&quot;:&quot;2&quot;,&quot;2&quot;:&quot;s|1&quot;,&quot;0&quot;:0}
+  ]
+  &quot;strings&quot;: [&quot;NSObject&quot;,&quot;a&quot;]
+}
+</code></pre> <div class="line-numbers-wrapper"><span class="line-number">1</span><br><span class="line-number">2</span><br><span class="line-number">3</span><br><span class="line-number">4</span><br><span class="line-number">5</span><br><span class="line-number">6</span><br><span class="line-number">7</span><br><span class="line-number">8</span><br><span class="line-number">9</span><br><span class="line-number">10</span><br><span class="line-number">11</span><br><span class="line-number">12</span><br><span class="line-number">13</span><br><span class="line-number">14</span><br><span class="line-number">15</span><br><span class="line-number">16</span><br><span class="line-number">17</span><br><span class="line-number">18</span><br></div></div><h3 id="json-补丁优化后的反思"><a href="#json-补丁优化后的反思" class="header-anchor">#</a> Json 补丁优化后的反思</h3> <p>两次优化以后，使用 oc2mango 中的 TestFiles 进行测试后，发现生成的补丁仍然不能够接受.</p> <ol><li>源文件大小 38 KB，Json 补丁大小 102 KB，仍然是2.7的样子.</li> <li>由于补丁文件中 Json 对象和字符串过多，从而使<code>{}&quot;&quot;:</code>符号过多重复。这几个符号简直撑起了一片天☁️。</li> <li>能否将这些无用的符号干掉？能否更好的压缩数据：比如节点类型字段我只想让它占一个字节？这就是实现二进制补丁的起因。</li></ol> <h2 id="二进制补丁"><a href="#二进制补丁" class="header-anchor">#</a> 二进制补丁</h2> <p>🎉欢迎来到二进制补丁，快乐频道（作者哭泣频道）。</p> <p>二进制补丁就是为了优化 Json 补丁而出现的，主要为了移除 Json 中的<code>[]{}:&quot;key</code>等字符（也算是压缩 Json 吧）。</p> <h3 id="二进制补丁内存布局"><a href="#二进制补丁内存布局" class="header-anchor">#</a> 二进制补丁内存布局</h3> <p>二进制补丁的核心是将整个语法树转换为全是基础类型数据的内存。</p> <p>序列化和反序列化的过程，是树的遍历，但是遍历顺序是严格依照结构体成员顺序完成的。</p> <p>并且每遇见一个节点，节点的基础类型成员需要写入内存或从内存中读取，子节点继续进入这个过程，直至没有子节点。一切都是为了能够完成类似 Json 的内存布局。</p> <h4 id="结构体约定"><a href="#结构体约定" class="header-anchor">#</a> 结构体约定:</h4> <ul><li><p>内存对齐值必须为1</p></li> <li><p>第一个字节始终为节点类型</p></li> <li><p>前置所有基本数据类型的结构体成员</p></li> <li><p>每个结构体有一个静态变量，表明该结构体所有基础类型数据的长度: _xxxxNodeBaseLength。</p> <p>这个变量的作用，主要是为了后续的代码生成，统一结构体对内存的读写。</p> <p><img src="/assets/img/StructMemeryLayout.9bc5d1f7.png" alt=""></p></li></ul> <h4 id="又是-int-a-1"><a href="#又是-int-a-1" class="header-anchor">#</a> 又是 int a = 1;</h4> <div class="language- line-numbers-mode"><pre class="language-text"><code>// 同样使用JSON补丁中的例子 int a = 1; 生成的JSON文件
+// 根据结构体的约定，已将JSON数据的顺序调整过
+{&quot;className&quot;:&quot;ORDeclareExpression&quot;,&quot;modifier&quot;:0,&quot;pair&quot;:{&quot;className&quot;:&quot;ORTypeVarPair&quot;,&quot;type&quot;:{&quot;className&quot;:&quot;ORTypeSpecial&quot;,&quot;type&quot;:9,&quot;name&quot;:null},&quot;var&quot;:{&quot;className&quot;:&quot;ORVariable&quot;,&quot;isBlock&quot;:0,&quot;ptCount&quot;:0,&quot;varname&quot;:&quot;a&quot;}},&quot;expression&quot;:{&quot;className&quot;:&quot;ORValueExpression&quot;,&quot;value_type&quot;:10,&quot;value&quot;:&quot;1&quot;}}
+// 移除JSON中的 &quot; 以及 key
+{ORDeclareExpression,0,{ORTypeVarPair,{ORTypeSpecial,9,null},{ORVariable,0,0,&quot;a&quot;}},{ORValueExpression,10,&quot;1&quot;}}
+//这不就是一个结构体吗😂
+//就算出现嵌套，最终它也是一块连续的内存，相当于在栈上的结构体嵌套
+//那把整个语法树拍平了，一样能够放进一块内存
+
+//移除内部的{}后，其实就是补丁文件最终的内存布局
+{ORDeclareExpression,0,ORTypeVarPair,ORTypeSpecial,9,null,ORVariable,0,0,&quot;a&quot;,ORValueExpression,10,&quot;1&quot;}
+//替换为_NodeType，内存大小为 41 字节
+{_ORDeclareExpressionNode,0,_ORTypeVarPairNode,_ORTypeSpecialNode,9,null,_ORVariableNode,0,0,&quot;a&quot;,_ORValueExpressionNode,10,&quot;1&quot;}
+</code></pre> <div class="line-numbers-wrapper"><span class="line-number">1</span><br><span class="line-number">2</span><br><span class="line-number">3</span><br><span class="line-number">4</span><br><span class="line-number">5</span><br><span class="line-number">6</span><br><span class="line-number">7</span><br><span class="line-number">8</span><br><span class="line-number">9</span><br><span class="line-number">10</span><br><span class="line-number">11</span><br><span class="line-number">12</span><br><span class="line-number">13</span><br></div></div><p>他们的结构转换如图所示:</p> <p><img src="/assets/img/json2binary.d5b6bc51.png" alt=""></p> <p>我们将下面这个例子，解释二进制补丁核心的序列化和反序列化。</p> <h4 id="相关的结构体"><a href="#相关的结构体" class="header-anchor">#</a> 相关的结构体</h4> <div class="language- line-numbers-mode"><pre class="language-text"><code>// 使用预编译的方式实现继承，所有结构体的第一个字节为节点类型
+#define _ORNodeFields \
+uint8_t nodeType;
+
+typedef struct {
+    _ORNodeFields
+}_ORNode; // nil
+
+typedef struct {
+    _ORNodeFields
+    uint32_t modifier;
+    _ORNode * pair;
+    _ORNode * expression;
+}_ORDeclareExpression;
+static uint32_t _ORDeclareExpressionBaseLength = 5; // int a = 1
+
+typedef struct {
+    _ORNodeFields
+    _ORNode * type;
+    _ORNode * var;
+}_ORTypeVarPair;
+static uint32_t _ORTypeVarPairBaseLength = 1; // int a
+
+typedef struct {
+    _ORNodeFields
+    uint32_t type;
+    _StringNode * name;
+}_ORTypeSpecial;
+static uint32_t _ORTypeSpecialBaseLength = 5; // int 
+
+typedef struct {
+    _ORNodeFields
+    BOOL isBlock;
+    uint32_t ptCount;
+    _StringNode * varname;
+}_ORVariable;
+static uint32_t _ORVariableBaseLength = 6;// a
+
+typedef struct {
+    _ORNodeFields
+    uint32_t value_type;
+    _ORNode * value;
+}_ORValueExpression; // 1
+static uint32_t _ORValueExpressionBaseLength = 5;
+
+typedef struct {
+    _ORNodeFields
+    uint32_t offset;
+    uint32_t strLen;
+}_StringNode;
+static uint32_t _StringNodeBaseLength = 9; // 字符串：变量名等
+</code></pre> <div class="line-numbers-wrapper"><span class="line-number">1</span><br><span class="line-number">2</span><br><span class="line-number">3</span><br><span class="line-number">4</span><br><span class="line-number">5</span><br><span class="line-number">6</span><br><span class="line-number">7</span><br><span class="line-number">8</span><br><span class="line-number">9</span><br><span class="line-number">10</span><br><span class="line-number">11</span><br><span class="line-number">12</span><br><span class="line-number">13</span><br><span class="line-number">14</span><br><span class="line-number">15</span><br><span class="line-number">16</span><br><span class="line-number">17</span><br><span class="line-number">18</span><br><span class="line-number">19</span><br><span class="line-number">20</span><br><span class="line-number">21</span><br><span class="line-number">22</span><br><span class="line-number">23</span><br><span class="line-number">24</span><br><span class="line-number">25</span><br><span class="line-number">26</span><br><span class="line-number">27</span><br><span class="line-number">28</span><br><span class="line-number">29</span><br><span class="line-number">30</span><br><span class="line-number">31</span><br><span class="line-number">32</span><br><span class="line-number">33</span><br><span class="line-number">34</span><br><span class="line-number">35</span><br><span class="line-number">36</span><br><span class="line-number">37</span><br><span class="line-number">38</span><br><span class="line-number">39</span><br><span class="line-number">40</span><br><span class="line-number">41</span><br><span class="line-number">42</span><br><span class="line-number">43</span><br><span class="line-number">44</span><br><span class="line-number">45</span><br><span class="line-number">46</span><br><span class="line-number">47</span><br><span class="line-number">48</span><br><span class="line-number">49</span><br><span class="line-number">50</span><br><span class="line-number">51</span><br></div></div><p>已知将<code>int a = 1;</code>的语法树转换为结构体表示后，语法树:</p> <div class="language- line-numbers-mode"><pre class="language-text"><code>_ORDeclareExpression:
+    | nodeType: _ORDeclareExpressionNode // uint8: 1字节
+    | modifier: 0 // uint32: 4字节
+    | _ORTypeVarPair: pair // _ORNode *
+      | nodeType: _ORTypeVarPairNode // uint8: 1字节
+      | _ORTypeSpecial: type // _ORNode *
+        | nodeType: _ORTypeSpecialNode // uint8: 1字节
+        | type: 9 // uint32: 4字节
+        | name: nil //值为nil时，使用_ORNode结构体（uint8）替换，1字节
+      | _ORVariable: var // _ORNode *
+        | nodeType: _ORVariableNode // uint8: 1字节
+        | isBlock: 0 // BOOL: 1字节
+        | ptCount: 0  // uint32: 4字节
+        | varname: @&quot;a&quot; //值为NSString时，使用_StringNode替换，9字节大小固定
+    | _ORValueExpression: expression // _ORNode *
+      | nodeType: _ORValueExpressionNode // uint8: 1字节
+      | value_type: 10 // uint32:4字节
+      | value: @&quot;1&quot; //值为NSString时，使用_StringNode替换，9字节大小固定
+</code></pre> <div class="line-numbers-wrapper"><span class="line-number">1</span><br><span class="line-number">2</span><br><span class="line-number">3</span><br><span class="line-number">4</span><br><span class="line-number">5</span><br><span class="line-number">6</span><br><span class="line-number">7</span><br><span class="line-number">8</span><br><span class="line-number">9</span><br><span class="line-number">10</span><br><span class="line-number">11</span><br><span class="line-number">12</span><br><span class="line-number">13</span><br><span class="line-number">14</span><br><span class="line-number">15</span><br><span class="line-number">16</span><br><span class="line-number">17</span><br><span class="line-number">18</span><br></div></div><p>根据上述结果，我们可以计算出<code>int a = 1</code>在二进制补丁中的大小为41字节。</p> <p><strong>最终目标:</strong></p> <p>在一块41字节大小的内存中，存储的数据需要如下</p> <div class="language- line-numbers-mode"><pre class="language-text"><code>//将nil和NSString替换为_ORNode和_StringNode后
+{_ORDeclareExpressionNode,0,_ORTypeVarPairNode,_ORTypeSpecialNode,9,ORNodeType,_ORVariableNode,0,0,StringNodeType,0,0,_ORValueExpressionNode,10,StringNodeType,0,0}
+//冒号后的是字节大小
+{
+_ORDeclareExpressionNode: 1,
+0: 4,
+_ORTypeVarPairNode: 1,
+_ORTypeSpecialNode: 1,
+9: 4,
+ORNodeType: 1,
+_ORVariableNode: 1,
+0: 1,
+0: 4,
+StringNodeType: 1,
+0: 4,
+0: 4,
+_ORValueExpressionNode: 1,
+10: 4,
+StringNodeType: 1,
+0: 4,
+0: 4
+}
+</code></pre> <div class="line-numbers-wrapper"><span class="line-number">1</span><br><span class="line-number">2</span><br><span class="line-number">3</span><br><span class="line-number">4</span><br><span class="line-number">5</span><br><span class="line-number">6</span><br><span class="line-number">7</span><br><span class="line-number">8</span><br><span class="line-number">9</span><br><span class="line-number">10</span><br><span class="line-number">11</span><br><span class="line-number">12</span><br><span class="line-number">13</span><br><span class="line-number">14</span><br><span class="line-number">15</span><br><span class="line-number">16</span><br><span class="line-number">17</span><br><span class="line-number">18</span><br><span class="line-number">19</span><br><span class="line-number">20</span><br><span class="line-number">21</span><br><span class="line-number">22</span><br></div></div><p>为了完成上述目标，<code>int a = 1;</code>语法树的序列化代码如下:</p> <div class="language- line-numbers-mode"><pre class="language-text"><code>// 其实每个结构体的基本类型数据的读/写都是一样的，只是命名不同而已
+// 如果有一个针对节点进行汇总处理的函数，这些代码是完全可以自动生成的
+
+_ORDeclareExpression *declareExpNode;
+void *buffer = malloc(41);
+uint32_t cursor = 0;
+//将_ORDeclareExpression的基本类型数据复制到内存中
+memcpy(buffer, declareExpNode, _ORDeclareExpressionBaseLength);
+//设置buffer的偏移量
+cursor += _ORDeclareExpressionBaseLength; // cursor = 0 + 5 = 5
+//buffer的[0,1)字节的值为_ORDeclareExpressionNode: uint8
+//buffer的[1,5)字节的值为0: uint32
+
+{
+  _ORTypeVarPair *varPair = declareExpNode-&gt;pair;
+  memcpy(buffer + cursor, varPair, _ORTypeVarPairBaseLength);
+  cursor += _ORTypeVarPairBaseLength; // cursor = 5 + 1 = 6
+  //buffer的[5,6)字节的值为_ORTypeVarPairNode: uint8
+
+  _ORTypeSpecial *typeSpecail = varPair-&gt;type;
+  memcpy(buffer + cursor, typeSpecail, _ORTypeSpecialBaseLength);
+  cursor += _ORTypeSpecialBaseLength; // cursor = 6 + 5 = 11
+  //buffer的[6,7)字节的值为_ORTypeSpecialNode: uint8
+  //buffer的[7,11)字节的值为9: uint32
+
+  _ORNode *typeName = varPair-&gt;name;
+  memcpy(buffer + cursor, typeSpecail, _ORNodeBaseLength);
+  cursor += _ORNodeBaseLength; // cursor = 11 + 1 = 12
+  //buffer的[11,12)字节的值为ORNodeType: uint8
+  
+  {
+      _ORVariable *variable = varPair-&gt;var;
+   		memcpy(buffer + cursor, variable, _ORVariableBaseLength);
+	    cursor += _ORVariableBaseLength; // cursor = 12 + 6 = 18
+      //buffer的[12,13)字节的值为_ORVariableNode: uint8
+      //buffer的[13,14)字节的值为0: BOOL
+      //buffer的[14,18)字节的值为0: uint32
+
+      _StringNode *variableName = variable-&gt;varname;
+      memcpy(buffer + cursor, variableName, _StringNodeBaseLength);
+      cursor += _StringNodeBaseLength;// cursor = 18 + 9 = 27
+      //buffer的[18,19)字节的值为StringNodeType: uint8
+      //buffer的[19,23)字节的值为0: uint32
+      //buffer的[23,27)字节的值为0: uint32
+  }
+}
+
+{
+  _ORValueExpression *vlaueExp = declareExpNode-&gt;expression;
+  memcpy(buffer + cursor, vlaueExp, _ORVariableBaseLength);
+  cursor += _ORVariableBaseLength;// cursor = 27 + 5 = 32
+  //buffer的[27,28)字节的值为_ORValueExpression: uint8
+  //buffer的[28,32)字节的值为10: uint32
+
+  _StringNode *stringNode = vlaueExp-&gt;value;
+  memcpy(buffer + cursor, variable, _StringNodeBaseLength);
+  cursor += _StringNodeBaseLength;// cursor = 32 + 9 = 41
+  //buffer的[32,33)字节的值为StringNodeType: uint8
+  //buffer的[33,37)字节的值为0: uint32
+  //buffer的[37,41)字节的值为0: uint32
+}
+</code></pre> <div class="line-numbers-wrapper"><span class="line-number">1</span><br><span class="line-number">2</span><br><span class="line-number">3</span><br><span class="line-number">4</span><br><span class="line-number">5</span><br><span class="line-number">6</span><br><span class="line-number">7</span><br><span class="line-number">8</span><br><span class="line-number">9</span><br><span class="line-number">10</span><br><span class="line-number">11</span><br><span class="line-number">12</span><br><span class="line-number">13</span><br><span class="line-number">14</span><br><span class="line-number">15</span><br><span class="line-number">16</span><br><span class="line-number">17</span><br><span class="line-number">18</span><br><span class="line-number">19</span><br><span class="line-number">20</span><br><span class="line-number">21</span><br><span class="line-number">22</span><br><span class="line-number">23</span><br><span class="line-number">24</span><br><span class="line-number">25</span><br><span class="line-number">26</span><br><span class="line-number">27</span><br><span class="line-number">28</span><br><span class="line-number">29</span><br><span class="line-number">30</span><br><span class="line-number">31</span><br><span class="line-number">32</span><br><span class="line-number">33</span><br><span class="line-number">34</span><br><span class="line-number">35</span><br><span class="line-number">36</span><br><span class="line-number">37</span><br><span class="line-number">38</span><br><span class="line-number">39</span><br><span class="line-number">40</span><br><span class="line-number">41</span><br><span class="line-number">42</span><br><span class="line-number">43</span><br><span class="line-number">44</span><br><span class="line-number">45</span><br><span class="line-number">46</span><br><span class="line-number">47</span><br><span class="line-number">48</span><br><span class="line-number">49</span><br><span class="line-number">50</span><br><span class="line-number">51</span><br><span class="line-number">52</span><br><span class="line-number">53</span><br><span class="line-number">54</span><br><span class="line-number">55</span><br><span class="line-number">56</span><br><span class="line-number">57</span><br><span class="line-number">58</span><br><span class="line-number">59</span><br><span class="line-number">60</span><br><span class="line-number">61</span><br></div></div><p>反序列化就是上面的反向操作了</p> <div class="language- line-numbers-mode"><pre class="language-text"><code>//1.直接获取内存当前位置的第一个字节，用于判断节点类型
+//2.根据节点类型，进入相关结构体的反序列化函数
+//3.根据节点的基本类型数据的长度，从内存中读取相应长度的数据，增加游标
+//4.根据所有子节点的顺序，依次回到第一步 (什么是子节点？类型是_ORNode *的结构体成员就是子节点了)
+</code></pre> <div class="line-numbers-wrapper"><span class="line-number">1</span><br><span class="line-number">2</span><br><span class="line-number">3</span><br><span class="line-number">4</span><br></div></div><p>序列化：最后使用写入完成后的buffer初始化NSData，并将NSData写入到文件即可。</p> <p>反序列化:  用NSData加载文件，并使用bytes生成_ORPatchFile。</p> <h3 id="代码生成"><a href="#代码生成" class="header-anchor">#</a> 代码生成</h3> <p><strong>BinaryPatchHelper.h/.m</strong> 中的代码，除去**_ORNode, _ListNode, _StringsNode, _StringNode, _PatchNode**和相关函数外，其余代码皆由 <strong>BinaryPatchCodeGenerator</strong> 生成。</p> <p><strong>BinaryPatchCodeGenerator</strong> 使用 <strong>oc2mangoLib</strong> 将 <strong>RunnerClasses.h</strong> 解析为语法树，根据文件存在的类，生成相应的结构体代码，以及 转换、反转换、序列化、反序列化和销毁，一共5个函数。并且针对类型为NSUInteger、NSArray、NSString的属性，分别转换为 uint32_t、_ListNode 和 _StringNode。</p> <p>参照如下例子:</p> <div class="language- line-numbers-mode"><pre class="language-text"><code>@interface ORTypeSpecial: ORNode
+@property (nonatomic, assign) TypeKind type;
+@property (nonatomic, nullable, copy) NSString * name;
+@end
+//结构体名：&quot;_&quot; + 类名
+//结构体基础类型字段总和长度：&quot;_&quot; + 类名 + &quot;BaseLength&quot;
+//字段数量和名字：和类中的属性完全相同
+typedef struct {
+    _ORNodeFields
+    uint32_t type;
+    _StringNode * name;
+}_ORTypeSpecial;
+static uint32_t _ORTypeSpecialBaseLength = 5;
+_ORTypeSpecial *_ORTypeSpecialConvert(ORTypeSpecial *exp, _PatchNode *patch, uint32_t *length);
+ORTypeSpecial *_ORTypeSpecialDeConvert(_ORTypeSpecial *node, _PatchNode *patch);
+void _ORTypeSpecialSerailization(_ORTypeSpecial *node, void *buffer, uint32_t *cursor);
+_ORTypeSpecial *_ORTypeSpecialDeserialization(void *buffer, uint32_t *cursor, uint32_t bufferLength);
+void _ORTypeSpecialDestroy(_ORTypeSpecial *node);
+</code></pre> <div class="line-numbers-wrapper"><span class="line-number">1</span><br><span class="line-number">2</span><br><span class="line-number">3</span><br><span class="line-number">4</span><br><span class="line-number">5</span><br><span class="line-number">6</span><br><span class="line-number">7</span><br><span class="line-number">8</span><br><span class="line-number">9</span><br><span class="line-number">10</span><br><span class="line-number">11</span><br><span class="line-number">12</span><br><span class="line-number">13</span><br><span class="line-number">14</span><br><span class="line-number">15</span><br><span class="line-number">16</span><br><span class="line-number">17</span><br><span class="line-number">18</span><br></div></div><p>下列约定，主要用于序列化和反序列化的代码生成。</p> <h4 id="节点序列化约定"><a href="#节点序列化约定" class="header-anchor">#</a> 节点序列化约定:</h4> <p>每个节点结构体的序列化函数，使用BaseLength值，将所有的基础类型的数据写入buffer。子节点的序列化同样使用这个规则。</p> <ul><li>每个结构体需实现自身的序列化函数</li></ul> <div class="language- line-numbers-mode"><pre class="language-text"><code>void \(structName)Serailization(\(structName) *node, void *buffer, uint32_t *cursor)
+</code></pre> <div class="line-numbers-wrapper"><span class="line-number">1</span><br></div></div><ul><li>将所有基础类型数据写入内存时，采用如下方式</li></ul> <div class="language- line-numbers-mode"><pre class="language-text"><code>memcpy(buffer + *cursor, node, \(structName)BaseLength);
+*cursor += \(structName)BaseLength;
+</code></pre> <div class="line-numbers-wrapper"><span class="line-number">1</span><br><span class="line-number">2</span><br></div></div><ul><li>针对复合类型字段，需要严格按照结构体成员的顺序写入内存。</li></ul> <div class="language- line-numbers-mode"><pre class="language-text"><code>typedef struct {
+    _ORNodeFields
+    _ORNode * type;
+    _ORNode * var;
+}_ORTypeVarPair;
+static uint32_t _ORTypeVarPairBaseLength = 1;
+void _ORTypeVarPairSerailization(_ORTypeVarPair *node, void *buffer, uint32_t *cursor){
+    memcpy(buffer + *cursor, node, _ORTypeVarPairBaseLength);
+    *cursor += _ORTypeVarPairBaseLength;
+    _ORNodeSerailization((_ORNode *)node-&gt;type, buffer, cursor);
+    _ORNodeSerailization((_ORNode *)node-&gt;var, buffer, cursor);
+}
+</code></pre> <div class="line-numbers-wrapper"><span class="line-number">1</span><br><span class="line-number">2</span><br><span class="line-number">3</span><br><span class="line-number">4</span><br><span class="line-number">5</span><br><span class="line-number">6</span><br><span class="line-number">7</span><br><span class="line-number">8</span><br><span class="line-number">9</span><br><span class="line-number">10</span><br><span class="line-number">11</span><br><span class="line-number">12</span><br></div></div><ul><li>使用统一的入口，将结构体的基础类型数据写入内存。根据类型对应的结构体，使用该结构体的序列化函数</li></ul> <div class="language- line-numbers-mode"><pre class="language-text"><code>void _ORNodeSerailization(_ORNode *node, void *buffer, uint32_t *cursor){
+	  if (node-&gt;nodeType == ORNodeType) {
+        memcpy(buffer + *cursor, node, \(_ORNodeLength));
+        *cursor += \(_ORNodeLength);
+  	}else if
+  	...
+  	//各个节点类型判断，根据类型使用相应的序列化函数
+}
+</code></pre> <div class="line-numbers-wrapper"><span class="line-number">1</span><br><span class="line-number">2</span><br><span class="line-number">3</span><br><span class="line-number">4</span><br><span class="line-number">5</span><br><span class="line-number">6</span><br><span class="line-number">7</span><br><span class="line-number">8</span><br></div></div><h4 id="节点反序列化约定"><a href="#节点反序列化约定" class="header-anchor">#</a> 节点反序列化约定:</h4> <p>每个节点结构体的反序列化函数，使用BaseLength值，从buffer中读取所有的基础类型的数据，然后复制到结构体中。子节点的反序列化同样使用这个规则。</p> <ul><li>每个结构体需实现自身的反序列化函数</li></ul> <div class="language- line-numbers-mode"><pre class="language-text"><code>\(structName) *\(structName)Deserialization(void *buffer, uint32_t *cursor, uint32_t bufferLength)
+</code></pre> <div class="line-numbers-wrapper"><span class="line-number">1</span><br></div></div><ul><li>从内存中将所有的基本类型数据保存到结构体时，采用如下方式</li></ul> <div class="language- line-numbers-mode"><pre class="language-text"><code>\(structName) *node = malloc(sizeof(\(structName)));
+memcpy(node, buffer + *cursor, \(structName)BaseLength);
+</code></pre> <div class="line-numbers-wrapper"><span class="line-number">1</span><br><span class="line-number">2</span><br></div></div><ul><li>针对复合类型字段，需要严格按照结构体成员的顺序从内存中读取。</li></ul> <div class="language- line-numbers-mode"><pre class="language-text"><code>typedef struct {
+    _ORNodeFields
+    _ORNode * type;
+    _ORNode * var;
+}_ORTypeVarPair;
+static uint32_t _ORTypeVarPairBaseLength = 1;
+_ORTypeVarPair *_ORTypeVarPairDeserialization(void *buffer, uint32_t *cursor, uint32_t bufferLength){
+    _ORTypeVarPair *node = malloc(sizeof(_ORTypeVarPair));
+    memcpy(node, buffer + *cursor, _ORTypeVarPairBaseLength);
+    *cursor += _ORTypeVarPairBaseLength;
+    node-&gt;type =(_ORNode *) _ORNodeDeserialization(buffer, cursor, bufferLength);
+    node-&gt;var =(_ORNode *) _ORNodeDeserialization(buffer, cursor, bufferLength);
+    return node;
+}
+</code></pre> <div class="line-numbers-wrapper"><span class="line-number">1</span><br><span class="line-number">2</span><br><span class="line-number">3</span><br><span class="line-number">4</span><br><span class="line-number">5</span><br><span class="line-number">6</span><br><span class="line-number">7</span><br><span class="line-number">8</span><br><span class="line-number">9</span><br><span class="line-number">10</span><br><span class="line-number">11</span><br><span class="line-number">12</span><br><span class="line-number">13</span><br><span class="line-number">14</span><br></div></div><ul><li>使用统一的入口，将结构体的基础类型数据写入内存。根据类型对应的结构体，使用该结构体的序列化函数</li></ul> <div class="language- line-numbers-mode"><pre class="language-text"><code>_ORNode *_ORNodeDeserialization(void *buffer, uint32_t *cursor, uint32_t bufferLength){
+ 	  _NodeType nodeType = ORNodeType;
+    if (*cursor &lt; bufferLength) {
+        nodeType = *(_NodeType *)(buffer + *cursor);
+    }
+  	...
+  	//各个节点类型判断，根据类型使用相应的反序列化函数
+}
+</code></pre> <div class="line-numbers-wrapper"><span class="line-number">1</span><br><span class="line-number">2</span><br><span class="line-number">3</span><br><span class="line-number">4</span><br><span class="line-number">5</span><br><span class="line-number">6</span><br><span class="line-number">7</span><br><span class="line-number">8</span><br></div></div><h3 id="自定义的结构体"><a href="#自定义的结构体" class="header-anchor">#</a> 自定义的结构体</h3> <h4 id="ornode"><a href="#ornode" class="header-anchor">#</a> _ORNode</h4> <p>所有节点结构体都继承自**_ORNode**结构体，在内存中，第一个字节的数据，始终是类型字段nodeType: <strong>_NodeType</strong>枚举列表。</p> <div class="language- line-numbers-mode"><pre class="language-text"><code>#define _ORNodeFields \
+uint8_t nodeType;
+
+//继承是使用预编译实现
+typedef struct {
+    _ORNodeFields
+}_ORNode;
+static uint32_t _ORNodeLength = 1;
+</code></pre> <div class="line-numbers-wrapper"><span class="line-number">1</span><br><span class="line-number">2</span><br><span class="line-number">3</span><br><span class="line-number">4</span><br><span class="line-number">5</span><br><span class="line-number">6</span><br><span class="line-number">7</span><br><span class="line-number">8</span><br></div></div><h4 id="stringsnode"><a href="#stringsnode" class="header-anchor">#</a> _StringsNode</h4> <p>与JSON补丁中的字符串表类似，但**_StringsNode**结构体不再是一个数组，它拥有一块内存，用来存储所有的字符串，同时它还有这块内存的大小的字段。</p> <div class="language- line-numbers-mode"><pre class="language-text"><code>typedef struct {
+    _ORNodeFields
+    uint32_t cursor;
+    char *buffer;
+}_StringsNode;
+static uint32_t _StringsNodeBaseLength = 5;
+</code></pre> <div class="line-numbers-wrapper"><span class="line-number">1</span><br><span class="line-number">2</span><br><span class="line-number">3</span><br><span class="line-number">4</span><br><span class="line-number">5</span><br><span class="line-number">6</span><br></div></div><h4 id="stringnode"><a href="#stringnode" class="header-anchor">#</a> _StringNode</h4> <p>与**_StringsNode<strong>相配合使用，用于在</strong>_StringsNode-&gt;buffer**中，直接定位并获取相应长度的字符串。</p> <div class="language- line-numbers-mode"><pre class="language-text"><code>// StringNode是对NSString的转换。
+typedef struct {
+    _ORNodeFields
+    uint32_t offset;
+    uint32_t strLen;
+}_StringNode;
+static uint32_t _StringNodeBaseLength = 9;
+</code></pre> <div class="line-numbers-wrapper"><span class="line-number">1</span><br><span class="line-number">2</span><br><span class="line-number">3</span><br><span class="line-number">4</span><br><span class="line-number">5</span><br><span class="line-number">6</span><br><span class="line-number">7</span><br></div></div><p>使用**_StringNode**获取字符串，如下代码：</p> <div class="language- line-numbers-mode"><pre class="language-text"><code>StringNode node = { StringNodeType, 3, 8 };
+StringsNode table = {StringsNodeType, 11, &quot;ABCNSObject&quot;};
+NSString *result = stringsNodeGetString(table, node);
+result = @&quot;NSObject&quot;;
+</code></pre> <div class="line-numbers-wrapper"><span class="line-number">1</span><br><span class="line-number">2</span><br><span class="line-number">3</span><br><span class="line-number">4</span><br></div></div><p>在内存中的操作，如图所示:</p> <p><img src="/assets/img/BinaryPatchStringTable.c724e6ba.png" alt=""></p> <h4 id="listnode"><a href="#listnode" class="header-anchor">#</a> _ListNode</h4> <div class="language- line-numbers-mode"><pre class="language-text"><code>// _ListNode是对NSArray的转换。
+typedef struct {
+    _ORNodeFields
+    uint32_t count;
+    _ORNode **nodes;
+}_ListNode;
+static uint32_t _ListNodeBaseLength = 5;
+</code></pre> <div class="line-numbers-wrapper"><span class="line-number">1</span><br><span class="line-number">2</span><br><span class="line-number">3</span><br><span class="line-number">4</span><br><span class="line-number">5</span><br><span class="line-number">6</span><br><span class="line-number">7</span><br></div></div><h4 id="patchnode"><a href="#patchnode" class="header-anchor">#</a> _PatchNode</h4> <div class="language- line-numbers-mode"><pre class="language-text"><code>// _PatchNode是对ORPatchFile的转换。
+typedef struct {
+    _ORNodeFields
+    BOOL enable;
+    _StringsNode *strings;
+    _StringNode *appVersion;
+    _StringNode *osVersion;
+    _ListNode *nodes;
+}_PatchNode;
+static uint32_t _PatchNodeBaseLength = 2;
+</code></pre> <div class="line-numbers-wrapper"><span class="line-number">1</span><br><span class="line-number">2</span><br><span class="line-number">3</span><br><span class="line-number">4</span><br><span class="line-number">5</span><br><span class="line-number">6</span><br><span class="line-number">7</span><br><span class="line-number">8</span><br><span class="line-number">9</span><br><span class="line-number">10</span><br></div></div><p>其他所有结构体相关代码，皆由<strong>BinaryPatchCodeGenerator</strong>生成</p> <h2 id="大小端问题"><a href="#大小端问题" class="header-anchor">#</a> 大小端问题</h2> <p>经测试，macos和iOS均是小端模式，放心使用即可。</p> <h2 id="结尾"><a href="#结尾" class="header-anchor">#</a> 结尾</h2> <p>说实话，这篇文章差点把我写哭泣，思路真不好理，很多地方我都不知道怎么表达。</p> <p>大伙们将就着看吧。</p></div></section> <footer class="page-edit"><!----> <div class="last-updated"><span class="prefix">Last Updated: </span> <span class="time">7/20/2021, 6:00:39 PM</span></div></footer> <!----> <div class="comments-wrapper"><!----></div> <ul class="side-bar sub-sidebar-wrapper" style="width:12rem;" data-v-70334359><li class="level-2" data-v-70334359><a href="/blogs/OCRunner/second/OCRunner-PatchFile.html#前言" class="sidebar-link reco-side-前言" data-v-70334359>前言</a></li><li class="level-2" data-v-70334359><a href="/blogs/OCRunner/second/OCRunner-PatchFile.html#json-补丁" class="sidebar-link reco-side-json-补丁" data-v-70334359>Json 补丁</a></li><li class="level-3" data-v-70334359><a href="/blogs/OCRunner/second/OCRunner-PatchFile.html#最初的-json-补丁" class="sidebar-link reco-side-最初的-json-补丁" data-v-70334359>最初的 Json 补丁</a></li><li class="level-3" data-v-70334359><a href="/blogs/OCRunner/second/OCRunner-PatchFile.html#第一次优化补丁大小-使用映射表" class="sidebar-link reco-side-第一次优化补丁大小-使用映射表" data-v-70334359>第一次优化补丁大小:  使用映射表</a></li><li class="level-3" data-v-70334359><a href="/blogs/OCRunner/second/OCRunner-PatchFile.html#第二次优化补丁大小-使用字符串表" class="sidebar-link reco-side-第二次优化补丁大小-使用字符串表" data-v-70334359>第二次优化补丁大小:  使用字符串表</a></li><li class="level-3" data-v-70334359><a href="/blogs/OCRunner/second/OCRunner-PatchFile.html#json-补丁优化后的反思" class="sidebar-link reco-side-json-补丁优化后的反思" data-v-70334359>Json 补丁优化后的反思</a></li><li class="level-2" data-v-70334359><a href="/blogs/OCRunner/second/OCRunner-PatchFile.html#二进制补丁" class="sidebar-link reco-side-二进制补丁" data-v-70334359>二进制补丁</a></li><li class="level-3" data-v-70334359><a href="/blogs/OCRunner/second/OCRunner-PatchFile.html#二进制补丁内存布局" class="sidebar-link reco-side-二进制补丁内存布局" data-v-70334359>二进制补丁内存布局</a></li><li class="level-3" data-v-70334359><a href="/blogs/OCRunner/second/OCRunner-PatchFile.html#代码生成" class="sidebar-link reco-side-代码生成" data-v-70334359>代码生成</a></li><li class="level-3" data-v-70334359><a href="/blogs/OCRunner/second/OCRunner-PatchFile.html#自定义的结构体" class="sidebar-link reco-side-自定义的结构体" data-v-70334359>自定义的结构体</a></li><li class="level-2" data-v-70334359><a href="/blogs/OCRunner/second/OCRunner-PatchFile.html#大小端问题" class="sidebar-link reco-side-大小端问题" data-v-70334359>大小端问题</a></li><li class="level-2" data-v-70334359><a href="/blogs/OCRunner/second/OCRunner-PatchFile.html#结尾" class="sidebar-link reco-side-结尾" data-v-70334359>结尾</a></li></ul></main> <!----></div></div></div></div><div class="global-ui"><div class="back-to-ceiling" style="right:1rem;bottom:6rem;width:2.5rem;height:2.5rem;border-radius:.25rem;line-height:2.5rem;display:none;" data-v-c6073ba8 data-v-c6073ba8><svg t="1574745035067" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="5404" class="icon" data-v-c6073ba8><path d="M526.60727968 10.90185116a27.675 27.675 0 0 0-29.21455937 0c-131.36607665 82.28402758-218.69155461 228.01873535-218.69155402 394.07834331a462.20625001 462.20625001 0 0 0 5.36959153 69.94390903c1.00431239 6.55289093-0.34802892 13.13561351-3.76865779 18.80351572-32.63518765 54.11355614-51.75690182 118.55860487-51.7569018 187.94566865a371.06718723 371.06718723 0 0 0 11.50484808 91.98906777c6.53300375 25.50556257 41.68394495 28.14064038 52.69160883 4.22606766 17.37162448-37.73630017 42.14135425-72.50938081 72.80769204-103.21549295 2.18761121 3.04276886 4.15646224 6.24463696 6.40373557 9.22774369a1871.4375 1871.4375 0 0 0 140.04691725 5.34970492 1866.36093723 1866.36093723 0 0 0 140.04691723-5.34970492c2.24727335-2.98310674 4.21612437-6.18497483 6.3937923-9.2178004 30.66633723 30.70611158 55.4360664 65.4791928 72.80769147 103.21549355 11.00766384 23.91457269 46.15860503 21.27949489 52.69160879-4.22606768a371.15156223 371.15156223 0 0 0 11.514792-91.99901164c0-69.36717486-19.13165746-133.82216804-51.75690182-187.92578088-3.42062944-5.66790279-4.76302748-12.26056868-3.76865837-18.80351632a462.20625001 462.20625001 0 0 0 5.36959269-69.943909c-0.00994388-166.08943902-87.32547796-311.81420293-218.6915546-394.09823051zM605.93803103 357.87693858a93.93749974 93.93749974 0 1 1-187.89594924 6.1e-7 93.93749974 93.93749974 0 0 1 187.89594924-6.1e-7z" p-id="5405" data-v-c6073ba8></path><path d="M429.50777625 765.63860547C429.50777625 803.39355007 466.44236686 1000.39046097 512.00932183 1000.39046097c45.56695499 0 82.4922232-197.00623328 82.5015456-234.7518555 0-37.75494459-36.9345906-68.35043303-82.4922232-68.34111062-45.57627738-0.00932239-82.52019037 30.59548842-82.51086798 68.34111062z" p-id="5406" data-v-c6073ba8></path></svg></div></div></div>
+    <script src="/assets/js/app.642360de.js" defer></script><script src="/assets/js/3.96dd975e.js" defer></script><script src="/assets/js/1.a1bdfc9f.js" defer></script><script src="/assets/js/9.c59f4e54.js" defer></script>
+  </body>
+</html>
